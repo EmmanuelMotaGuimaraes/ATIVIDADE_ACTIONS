@@ -1,0 +1,44 @@
+name: Dev pull request - Build
+
+on:
+  pull_request:
+    branches:
+      - dev
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set working directory
+        working-directory: ./my-app
+        run: echo "Working directory set to ./my-app"
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install Packages
+        working-directory: ./my-app
+        run: yarn install
+
+      - name: Build project
+        working-directory: ./my-app
+        run: yarn build
+
+      - name: Upload production-ready build files
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-files
+          path: ./my-app/build
+
+ 
