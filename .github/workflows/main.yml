@@ -1,8 +1,12 @@
 name: Build & deploy
+
 on:
   push:
     branches:
       - main
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -10,22 +14,26 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [14.x]
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set working directory
+        working-directory: ./my-app
+        run: echo "Working directory set to ./my-app"
+
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
 
       - name: Install Packages
-        run: yarn install
         working-directory: ./my-app
+        run: yarn install
 
       - name: Build project
-        run: yarn build
         working-directory: ./my-app
+        run: yarn build
 
       - name: Upload production-ready build files
         uses: actions/upload-artifact@v4
@@ -39,7 +47,10 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v4
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
         with:
           name: production-files
           path: ./build
