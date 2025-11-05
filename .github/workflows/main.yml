@@ -12,6 +12,8 @@ jobs:
       matrix:
         node-version: [14.x]
     steps:
+      - name: Set working directory
+        working-directory: ./my-app
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
@@ -33,6 +35,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
+      - name: Set working directory
+        working-directory: ./my-app
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
